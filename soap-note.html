@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCPT Session Note</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --sage: #5a7a5a;
+    --sage-light: #8aab8a;
+    --sage-pale: #eef4ee;
+    --sage-mid: #d4e8d4;
+    --warm: #f7f3ee;
+    --warm-dark: #e8e0d5;
+    --ink: #2a2a2a;
+    --ink-mid: #555;
+    --ink-light: #888;
+    --accent: #b85c38;
+    --accent-light: #f0ddd5;
+    --white: #ffffff;
+    --border: #d0ddd0;
+    --shadow: 0 2px 12px rgba(90,122,90,0.10);
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--sage);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: .02em;
+  }
+  header p { font-size: .8rem; opacity: .8; margin-top: 2px; }
+
+  .badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--sage);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .dot {
+    width: 8px; height: 8px;
+    background: var(--sage);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .soap-label {
+    display: inline-block;
+    background: var(--sage);
+    color: white;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
+  label { font-size: .72rem; font-weight: 600; color: var(--ink-mid); text-transform: uppercase; letter-spacing: .07em; }
+  input[type="text"], input[type="date"], input[type="number"], select, textarea {
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color .2s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--sage);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* ── CHECKBOX GRID ── */
+  .check-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--sage-pale);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--ink-mid);
+    transition: all .15s;
+    user-select: none;
+  }
+  .chip input { display: none; }
+  .chip.checked {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+  .chip .checkmark {
+    width: 13px; height: 13px;
+    border: 1.5px solid currentColor;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .chip.checked .checkmark::after { content: "✓"; }
+
+  /* Emotion sections */
+  .emotion-section { margin-bottom: 10px; }
+  .emotion-label {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 5px;
+  }
+
+  /* Intensity slider */
+  .intensity-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .intensity-row label { white-space: nowrap; margin-bottom: 0; }
+  input[type=range] {
+    flex: 1;
+    accent-color: var(--sage);
+    height: 4px;
+    cursor: pointer;
+  }
+  .intensity-val {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--sage);
+    width: 24px;
+    text-align: center;
+  }
+
+  /* Play themes grid */
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+    gap: 7px;
+  }
+  .theme-chip {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: .8rem;
+    color: var(--ink-mid);
+    transition: all .15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    background: var(--sage-pale);
+  }
+  .theme-chip .theme-check {
+    width: 15px; height: 15px;
+    border: 1.5px solid currentColor;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .theme-chip.checked {
+    background: var(--sage-mid);
+    border-color: var(--sage);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .theme-chip.checked .theme-check::after { content: "✓"; color: var(--sage); }
+  .theme-chip small { display: block; font-size: .7rem; opacity: .7; margin-top: 1px; font-weight: 400; }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--warm-dark); margin: 14px 0; }
+
+  /* ── GENERATE BUTTON ── */
+  #generateBtn {
+    width: 100%;
+    background: var(--sage);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: .03em;
+    transition: background .2s, transform .1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  #generateBtn:hover { background: #4a6a4a; }
+  #generateBtn:active { transform: scale(.98); }
+  #generateBtn:disabled { background: var(--sage-light); cursor: not-allowed; }
+
+  /* ── OUTPUT ── */
+  #outputCard {
+    display: none;
+    background: var(--white);
+    border: 2px solid var(--sage);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .output-header {
+    background: var(--sage);
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .output-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .copy-btn {
+    background: rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.4);
+    color: white;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: .78rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: background .15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,.32); }
+
+  #outputText {
+    padding: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    line-height: 1.75;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Section helpers */
+  .section-hint {
+    font-size: .75rem;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Play Therapy Session Note</h1>
+    <p>Child-Centered Play Therapy · Quick-Fill → SOAP Format</p>
+  </div>
+  <span class="badge">CCPT</span>
+</header>
+
+<main>
+
+  <!-- CLIENT INFO -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Session Information</div>
+    <div class="row">
+      <div class="field">
+        <label>Child's First Name / Initials</label>
+        <input type="text" id="childName" placeholder="e.g., N.T.">
+      </div>
+      <div class="field">
+        <label>Session #</label>
+        <input type="number" id="sessionNum" placeholder="1" min="1">
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="sessionDate">
+      </div>
+      <div class="field">
+        <label>Start Time</label>
+        <input type="time" id="sessionStart">
+      </div>
+      <div class="field">
+        <label>End Time</label>
+        <input type="time" id="sessionEnd">
+      </div>
+      <div class="field">
+        <label>Session Length (min)</label>
+        <input type="number" id="sessionLen" placeholder="45" min="1">
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="field">
+        <label>DSM Diagnosis / Code</label>
+        <input type="text" id="diagnosis" placeholder="e.g., F43.24 Adjustment Disorder">
+      </div>
+      <div class="field">
+        <label>Others Present</label>
+        <input type="text" id="othersPresent" placeholder="e.g., Parent in waiting room">
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBJECTIVE -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Subjective — Emotions Expressed <span class="soap-label">S</span></div>
+    <p class="section-hint">Check all emotions the child communicated through play, body language, or verbally.</p>
+
+    <div class="emotion-section">
+      <div class="emotion-label">😊 Happy / Positive</div>
+      <div class="check-grid" id="emotHappy"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">💪 Confident</div>
+      <div class="check-grid" id="emotConfident"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">😢 Sad / Discouraged</div>
+      <div class="check-grid" id="emotSad"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">😕 Confused / Uncertain</div>
+      <div class="check-grid" id="emotConfused"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">😠 Angry / Frustrated</div>
+      <div class="check-grid" id="emotAngry"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">🔍 Curious / Focused</div>
+      <div class="check-grid" id="emotCurious"></div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-label">😨 Afraid / Anxious</div>
+      <div class="check-grid" id="emotAfraid"></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="intensity-row">
+      <label>Overall Intensity</label>
+      <input type="range" id="intensity" min="1" max="5" value="3">
+      <span class="intensity-val" id="intensityVal">3</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+      <div style="font-size:.72rem;color:var(--ink-light)">Quality:</div>
+      <div class="check-grid" id="qualityChips"></div>
+    </div>
+  </div>
+
+  <!-- OBJECTIVE -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Objective — Play Observed <span class="soap-label">O</span></div>
+    <p class="section-hint">Check toys/materials used. Describe notable play sequences briefly below.</p>
+
+    <div class="check-grid" id="toyChips" style="margin-bottom:14px"></div>
+
+    <div class="divider"></div>
+    <div style="margin-bottom:10px">
+      <div class="emotion-label" style="margin-bottom:6px">Play Type</div>
+      <div class="check-grid" id="playTypeChips"></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="emotion-label" style="margin-bottom:6px">Relating Style to Therapist</div>
+      <div class="check-grid" id="relatingChips"></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="field">
+      <label>Brief Description of Play Sequences</label>
+      <textarea id="playDesc" placeholder="e.g., Child entered and went directly to sandbox. Created a battle scene with dinosaurs and snakes for most of session. Brief self-regulation break at art table."></textarea>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Significant Verbalizations (use quotes if exact)</label>
+      <textarea id="verbalizations" placeholder='e.g., Child said "nobody likes me" during puppet play. Therapist reflected feeling.'></textarea>
+    </div>
+
+    <div class="divider"></div>
+    <div>
+      <div class="emotion-label" style="margin-bottom:6px">Therapist Interventions Used</div>
+      <div class="check-grid" id="interventionChips"></div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Directive Activity Used (if applicable)</label>
+      <input type="text" id="directiveActivity" placeholder="e.g., Bibliotherapy — The Invisible String, Feeling check-in with emojis">
+    </div>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Assessment — Themes & Clinical Impression <span class="soap-label">A</span></div>
+    <p class="section-hint">Check primary play themes observed. Add your brief clinical impression below.</p>
+
+    <div class="theme-grid" id="themeGrid" style="margin-bottom:14px"></div>
+
+    <div class="field">
+      <label>Clinical Impression / Case Conceptualization Notes</label>
+      <textarea id="clinicalImpression" placeholder="e.g., Child demonstrated increased ability to self-regulate after play disruption. Power/control theme continues; some movement toward mastery noted."></textarea>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Progress Toward Treatment Goals</label>
+      <div class="check-grid" id="progressChips"></div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Risk / Safety Notes (suicidality, self-harm, abuse disclosures)</label>
+      <textarea id="riskNotes" placeholder="No concerns noted. OR: Child disclosed..." style="min-height:50px"></textarea>
+    </div>
+  </div>
+
+  <!-- PLAN -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Plan <span class="soap-label">P</span></div>
+    <div class="row">
+      <div class="field">
+        <label>Next Appointment Date</label>
+        <input type="date" id="nextAppt">
+      </div>
+      <div class="field">
+        <label>Session Frequency</label>
+        <select id="frequency">
+          <option value="">— select —</option>
+          <option>Weekly</option>
+          <option>Biweekly</option>
+          <option>Monthly</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Homework / Recommendations for Parent</label>
+      <textarea id="homework" placeholder="e.g., Continue special playtime 30 min daily. Parent to call school counselor re: recess behavior."></textarea>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Plans / Goals for Next Session</label>
+      <textarea id="nextGoals" placeholder="e.g., Continue nondirective CCPT. May introduce bibliotherapy around friendship if child is receptive."></textarea>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Collateral Contacts / Referrals Needed</label>
+      <textarea id="collateral" placeholder="e.g., ROI obtained for school. Will contact teacher by Friday." style="min-height:50px"></textarea>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Therapist Name &amp; Credentials</label>
+      <input type="text" id="therapistName" placeholder="e.g., Jane Doe, LMFT, RPT">
+    </div>
+  </div>
+
+  <button id="generateBtn" onclick="generateNote()">
+    <span id="btnText">✦ Generate SOAP Session Note</span>
+    <div class="spinner" id="spinner"></div>
+  </button>
+
+  <div id="outputCard">
+    <div class="output-header">
+      <h3>📋 Generated SOAP Note</h3>
+      <button class="copy-btn" onclick="copyNote()">Copy to Clipboard</button>
+    </div>
+    <div id="outputText"></div>
+  </div>
+
+</main>
+
+<script>
+// ── DATA ──
+const emotions = {
+  emotHappy:     ["pleased","satisfied","delighted","excited","silly","elated","surprised","relieved"],
+  emotConfident: ["proud","strong","determined","comfortable","relaxed"],
+  emotSad:       ["disappointed","hopeless","pessimistic","discouraged","lonely","worthless","guilty"],
+  emotConfused:  ["ambivalent","hesitant","uncertain","timid","nervous","embarrassed"],
+  emotAngry:     ["impatient","irritated","annoyed","frustrated","mad","mean","jealous","bored"],
+  emotCurious:   ["interested","focused"],
+  emotAfraid:    ["vulnerable","helpless","distrustful","fearful","terrified"],
+};
+
+const qualityOptions = ["flat","broad","restricted","contained","ambiguous"];
+
+const toys = [
+  "Sandbox / water","Puppets","Medical kit / bandages","Kitchen / cooking / food",
+  "Musical instruments","Easel / painting","Games / bowling / balls","Bop bag",
+  "Building blocks","Dress up / masks / wand","Vehicles / planes",
+  "Crafts / clay / markers","Animals: domestic","Animals: wild / dinosaurs / sharks",
+  "Dollhouse / doll family","Soldiers / weapons / handcuffs","Baby dolls / bottle / pacifier",
+  "Cash register / phone","Blocks","Sand tray miniatures"
+];
+
+const playTypes = ["Solitary","Parallel","Onlooker","Associative","Cooperative","Collaborative","Competitive","Combative","Constructive"];
+const relatingStyles = ["Egocentric","Identifies with other","Helpless","Seeks support","Rejects support","Empathic","Confrontative","Rescues others"];
+const interventions = [
+  "Tracking behavior","Reflecting content","Reflecting feeling",
+  "Facilitating decision-making","Returning responsibility","Esteem building",
+  "Limit setting","Choice giving","Therapeutic relationship",
+  "Problem solving","Cognitive reframe","Validation","Encouragement",
+  "Directive activity","Complimenting","Amplifying solution talk"
+];
+const themes = [
+  {name:"Exploratory / Mastery", sub:"Competence, curiosity, achievement"},
+  {name:"Safety / Security / Protection", sub:"Seeking safety, hiding, guarding"},
+  {name:"Relationship Building", sub:"Connection, trust, interpersonal"},
+  {name:"Family / Nurturance", sub:"Caregiving, feeding, parenting play"},
+  {name:"Power / Aggression", sub:"Control, dominance, battles"},
+  {name:"Helplessness / Inadequacy", sub:"Victim, loss of control"},
+  {name:"Control / Safety through Control", sub:"Rigid rules, ordering, controlling"},
+  {name:"Death / Loss / Grieving", sub:"Burial, goodbye, abandonment"},
+  {name:"Abandonment", sub:"Separation, being left, rejection"},
+  {name:"Sexualized", sub:"Requires mandatory reporting consideration"},
+  {name:"Trauma Re-enactment", sub:"Dynamic or toxic posttraumatic play"},
+  {name:"Regulation / Self-soothing", sub:"Child self-regulating in session"},
+];
+const progressOptions = ["Progressing toward goals","Maintaining progress","Regression noted","Plateau","Goals met — reassess"];
+
+// ── BUILD UI ──
+function makeChips(containerId, options, isObj = false) {
+  const c = document.getElementById(containerId);
+  options.forEach(opt => {
+    const label = document.createElement('label');
+    label.className = 'chip';
+    const text = isObj ? opt.name : opt;
+    label.innerHTML = `<input type="checkbox" value="${text}"><span class="checkmark"></span>${text}`;
+    label.querySelector('input').addEventListener('change', function() {
+      label.classList.toggle('checked', this.checked);
+    });
+    c.appendChild(label);
+  });
+}
+
+function makeThemes() {
+  const c = document.getElementById('themeGrid');
+  themes.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'theme-chip';
+    div.innerHTML = `<div class="theme-check"></div><div><div>${t.name}</div><small>${t.sub}</small></div>`;
+    div.addEventListener('click', () => {
+      div.classList.toggle('checked');
+    });
+    c.appendChild(div);
+  });
+}
+
+Object.keys(emotions).forEach(id => makeChips(id, emotions[id]));
+makeChips('qualityChips', qualityOptions);
+makeChips('toyChips', toys);
+makeChips('playTypeChips', playTypes);
+makeChips('relatingChips', relatingStyles);
+makeChips('interventionChips', interventions);
+makeThemes();
+makeChips('progressChips', progressOptions);
+
+// Intensity slider
+document.getElementById('intensity').addEventListener('input', function() {
+  document.getElementById('intensityVal').textContent = this.value;
+});
+
+// Default date to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('sessionDate').value = today;
+
+// ── COLLECT DATA ──
+function getChecked(containerId) {
+  const c = document.getElementById(containerId);
+  return [...c.querySelectorAll('input:checked')].map(i => i.value);
+}
+function getThemesChecked() {
+  return [...document.querySelectorAll('#themeGrid .theme-chip.checked')]
+    .map(d => d.querySelector('div > div').textContent);
+}
+function val(id) { return document.getElementById(id).value.trim(); }
+
+// ── GENERATE ──
+async function generateNote() {
+  const btn = document.getElementById('generateBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+
+  // Collect all data
+  const data = {
+    childName: val('childName') || '[Child]',
+    sessionNum: val('sessionNum') || '?',
+    sessionDate: val('sessionDate') || today,
+    sessionStart: val('sessionStart'),
+    sessionEnd: val('sessionEnd'),
+    sessionLen: val('sessionLen') || '45',
+    diagnosis: val('diagnosis') || 'Pending',
+    othersPresent: val('othersPresent'),
+    intensity: val('intensity'),
+    quality: getChecked('qualityChips'),
+    emotions: {
+      happy: getChecked('emotHappy'),
+      confident: getChecked('emotConfident'),
+      sad: getChecked('emotSad'),
+      confused: getChecked('emotConfused'),
+      angry: getChecked('emotAngry'),
+      curious: getChecked('emotCurious'),
+      afraid: getChecked('emotAfraid'),
+    },
+    toys: getChecked('toyChips'),
+    playType: getChecked('playTypeChips'),
+    relatingStyle: getChecked('relatingChips'),
+    playDesc: val('playDesc'),
+    verbalizations: val('verbalizations'),
+    interventions: getChecked('interventionChips'),
+    directiveActivity: val('directiveActivity'),
+    themes: getThemesChecked(),
+    clinicalImpression: val('clinicalImpression'),
+    progress: getChecked('progressChips'),
+    riskNotes: val('riskNotes'),
+    nextAppt: val('nextAppt'),
+    frequency: val('frequency'),
+    homework: val('homework'),
+    nextGoals: val('nextGoals'),
+    collateral: val('collateral'),
+    therapistName: val('therapistName') || '[Therapist Name, Credentials]',
+  };
+
+  btn.disabled = true;
+  btnText.textContent = 'Generating…';
+  spinner.style.display = 'block';
+
+  const prompt = buildPrompt(data);
+
+  try {
+    const resp = await fetch('/.netlify/functions/generate-note', { method: 'POST',
+      body: JSON.stringify({ prompt: prompt })
+    });
+    const result = await resp.json();
+    const text = result.content?.map(b => b.text || '').join('') || 'Error: No response.';
+    showOutput(text);
+  } catch(e) {
+    showOutput('Error generating note: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btnText.textContent = '✦ Regenerate SOAP Note';
+  spinner.style.display = 'none';
+}
+
+function buildPrompt(d) {
+  const allEmotions = [
+    ...d.emotions.happy, ...d.emotions.confident, ...d.emotions.sad,
+    ...d.emotions.confused, ...d.emotions.angry, ...d.emotions.curious, ...d.emotions.afraid
+  ];
+  const emotionCats = [];
+  if (d.emotions.happy.length || d.emotions.confident.length) emotionCats.push(`Positive/Confident (${[...d.emotions.happy,...d.emotions.confident].join(', ')})`);
+  if (d.emotions.sad.length) emotionCats.push(`Sad/Discouraged (${d.emotions.sad.join(', ')})`);
+  if (d.emotions.confused.length) emotionCats.push(`Confused/Uncertain (${d.emotions.confused.join(', ')})`);
+  if (d.emotions.angry.length) emotionCats.push(`Angry/Frustrated (${d.emotions.angry.join(', ')})`);
+  if (d.emotions.curious.length) emotionCats.push(`Curious (${d.emotions.curious.join(', ')})`);
+  if (d.emotions.afraid.length) emotionCats.push(`Afraid/Anxious (${d.emotions.afraid.join(', ')})`);
+
+  return `You are a licensed Child-Centered Play Therapist writing a SOAP progress note. Write a professional, clinically appropriate SOAP note using the therapist's quick-fill observations below. 
+
+The note must:
+- Use SOAP format with clearly labeled S / O / A / P sections
+- Be written in professional third-person clinical language
+- Be concise but thorough — suitable for a client file and insurance/billing
+- For the Subjective section: describe the emotional tone the child communicated through play and behavior
+- For the Objective section: describe observed play behaviors, toys used, and therapist interventions in behavioral terms (no interpretation)
+- For the Assessment section: identify play themes clinically, write a case conceptualization connecting themes to treatment goals, and note progress
+- For the Plan section: outline next steps, homework, and follow-up
+
+Do NOT invent details not provided. If a field is blank or empty, omit that element naturally.
+
+--- QUICK-FILL DATA ---
+Child: ${d.childName} | Session #${d.sessionNum} | Date: ${d.sessionDate} | Time: ${d.sessionStart && d.sessionEnd ? d.sessionStart+' – '+d.sessionEnd : 'not specified'} | Length: ${d.sessionLen} min
+Diagnosis: ${d.diagnosis}
+Others present: ${d.othersPresent || 'none noted'}
+
+SUBJECTIVE — Emotions expressed:
+${emotionCats.length ? emotionCats.join('; ') : 'Not specified'}
+Intensity: ${d.intensity}/5 | Quality: ${d.quality.join(', ') || 'not specified'}
+
+OBJECTIVE — Play observed:
+Toys/materials: ${d.toys.join(', ') || 'not specified'}
+Play type: ${d.playType.join(', ') || 'not noted'}
+Relating style: ${d.relatingStyle.join(', ') || 'not noted'}
+Play sequences: ${d.playDesc || 'not described'}
+Significant verbalizations: ${d.verbalizations || 'none noted'}
+Therapist interventions: ${d.interventions.join(', ') || 'standard CCPT skills'}
+Directive activity: ${d.directiveActivity || 'none — nondirective session'}
+
+ASSESSMENT — Clinical:
+Play themes: ${d.themes.join(', ') || 'not specified'}
+Therapist clinical impression: ${d.clinicalImpression || 'see themes above'}
+Progress toward goals: ${d.progress.join(', ') || 'see assessment'}
+Risk/safety: ${d.riskNotes || 'No suicidality, self-harm, or abuse concerns noted.'}
+
+PLAN:
+Next appointment: ${d.nextAppt || 'TBD'} | Frequency: ${d.frequency || 'ongoing'}
+Parent homework/recommendations: ${d.homework || 'none this session'}
+Goals for next session: ${d.nextGoals || 'continue current treatment approach'}
+Collateral contacts/referrals: ${d.collateral || 'none at this time'}
+Therapist: ${d.therapistName}
+
+Write the complete SOAP note now. End with a signature line: "Therapist: ${d.therapistName} | Date: ${d.sessionDate}"`;
+}
+
+function showOutput(text) {
+  const card = document.getElementById('outputCard');
+  const out = document.getElementById('outputText');
+  card.style.display = 'block';
+  out.textContent = text;
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyNote() {
+  const text = document.getElementById('outputText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+</script>
+</body>
+</html>
